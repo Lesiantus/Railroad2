@@ -70,14 +70,6 @@ class Main
       stations_list
     elsif @choice == 11
       trains_list
-    elsif @choice == 0
-      loop_end
-    end
-  end
-
-  def loop_end
-    loop do
-      break
     end
   end
 
