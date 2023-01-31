@@ -3,9 +3,8 @@ class Train
   attr_reader :wagon, :type, :number
 
 
-  def initialize(number, type)
+  def initialize(number)
     @number = number
-    @type = type
     @wagons = []
     @speed = 0
   end
@@ -14,8 +13,8 @@ class Train
     @speed=0
   end
 
-  def wagon_add(wagon)
-    if @speed == 0
+  def add_wagon(wagon)
+    if @speed == 0 && wagon.type == self.type
       @wagons << wagon
     else
       puts "Поезд должен стоять"
