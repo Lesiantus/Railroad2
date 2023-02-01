@@ -6,6 +6,8 @@ require_relative 'passenger_wagon'
 require_relative 'cargo_wagon'
 require_relative 'route'
 require_relative 'station'
+require_relative 'manufacturer'
+require_relative 'instance_counter'
 
 class Main
   WAGON = {:cargo => CargoWagon, :passenger => PassengerWagon}

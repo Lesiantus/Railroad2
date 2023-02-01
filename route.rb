@@ -1,8 +1,11 @@
 class Route
+  include InstanceCounter
+
   attr_accessor :stations, :depart, :arrive
 
   def initialize(depart, arrive)
     @stations = [depart, arrive]
+    initialize_instance
   end
 
   def add_station(station)
