@@ -3,6 +3,6 @@ class Wagon
   include Manufacturer
   attr_reader :type
   def initialize
-    initialize_instance
+    register_instance
   end
 end

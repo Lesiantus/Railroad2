@@ -15,7 +15,7 @@ class Train
     @wagons = []
     @speed = 0
     @@trains[number] = self
-    initialize_instance
+    register_instance
   end
 
   def self.find(number)
