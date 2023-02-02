@@ -22,7 +22,7 @@ class Main
       show_menu
       choice = get_choice
       action(choice)
-      if choice == 0
+      if @choice == 0
         break
       end
     end
@@ -76,6 +76,7 @@ class Main
   end
 
 
+
   def trains_list
     @trains.map{|el| puts el.number}
   end
@@ -87,6 +88,8 @@ class Main
 
 
   def move_train
+    raise "Нужно создать поезд" if @trains.empty?
+    raise "Нужно создать станцию" if @stations.empty?
     puts "Выберите номер поезда"
     number = $stdin.gets.chomp
     train_number = @trains.detect{|train| train.number == number}
@@ -103,10 +106,13 @@ class Main
         puts "Поезд помещен на станцию #{station.name}"
       end
     end
+  rescue RuntimeError => e
+    puts e.message
   end
 
 
   def delete_wagon_from_train
+    raise "Сначала нужно создать поезд" if @trains.empty?
     puts "Введите номер поезда для удаления вагона"
     number = $stdin.gets.chomp
     train_number = @trains.detect{|train| train.number == number}
@@ -117,10 +123,13 @@ class Main
     else train_number.wagon_remove(train_number.wagons.last)
       puts "поузду номер #{number} был отцеплен вагон"
     end
+  rescue RuntimeError => e
+    puts e.message
   end
 
 
   def add_wagon_to_train
+    raise "Сначала необходимо создать поезд" if @trains.empty?
     puts "Введите номер поезда для добавления вагона"
     number = $stdin.gets.chomp
     train_number = @trains.detect{|train| train.number == number}
@@ -129,10 +138,14 @@ class Main
     else train_number.add_wagon(WAGON[train_number.type].new)
       puts "поезду номер #{number} был добавлен вагон"
     end
+  rescue RuntimeError => e
+    puts e.message
   end
 
 
   def add_route_to_train
+    raise "Сначала необходимо создать поезд" if @trains.empty?
+    raise "Сначала необходимо создать станцию" if @stations.empty?
     puts "Введите номер поезда для присвоения маршрута"
     number = $stdin.gets.chomp
     train_number = @trains.detect{|train| train.number == number}
@@ -141,9 +154,12 @@ class Main
     else train_number.add_route(@routs[0])
       puts "Поезду #{number} был назначен маршрут"
     end
+  rescue RuntimeError => e
+    puts e.message
   end
 
   def route_station_delete
+    raise "Сначала необходимо создать маршрут" if @routs.empty?
     puts "Введите название станции из списка созданных ранее"
     station_delete = $stdin.gets.chomp
     deleting_station = @routs[0].stations.detect{|station| station.name == station_delete}
@@ -153,6 +169,8 @@ class Main
       puts "Удалена станция из маршрута следования #{deleting_station}"
       @routs[0].delete_station(deleting_station)
     end
+  rescue RuntimeError => e
+    puts e.message
   end
 
 
@@ -170,6 +188,7 @@ class Main
 
 
   def create_route
+    raise "Сначала необходимо создать 2 станции" if @stations.length < 2
     puts "Для создания маршрута укажите начальную точку пути следования"
     point1 = $stdin.gets.chomp
     beginning = @stations.detect{|station| station.name == point1}
@@ -187,12 +206,15 @@ class Main
         puts "создан новый маршрут #{beginning.name}, #{ending.name}"
       end
     end
+  rescue RuntimeError => e
+    puts e.message
   end
 
 
   def add_train
     puts "чтобы создать грузовой поезд, нажмите 1, чтобы создать пассажирский, нажмите 2"
     inp = $stdin.gets.chomp.to_i
+    raise "Поезд не создан! Можно создать, нажав клавишу 1 или 2!" unless [1, 2].include?(inp)
     if inp == 1
       puts "Введите номер поезда(номером может быть сочетание цифр и букв формата ххх-хх)"
       number = $stdin.gets.chomp
