@@ -1,10 +1,12 @@
 class Route
   include InstanceCounter
+  include Valid
 
   attr_accessor :stations, :depart, :arrive
 
   def initialize(depart, arrive)
     @stations = [depart, arrive]
+    validate!
     register_instance
   end
 
@@ -22,5 +24,10 @@ class Route
 
   def show_stations
     puts stations.map{|el| el.name}
+  end
+  protected
+
+  def validate!
+    raise "Должно быть две станции при указании маршрута" if stations.size < 2
   end
 end

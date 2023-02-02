@@ -115,7 +115,7 @@ class Main
     elsif train_number.wagons.empty?
       puts "У этого поезда нет прицепленных вагонов"
     else train_number.wagon_remove(train_number.wagons.last)
-      p @trains
+      puts "поузду номер #{number} был отцеплен вагон"
     end
   end
 
@@ -127,7 +127,7 @@ class Main
     if train_number.nil?
       puts "Такого поезда еще нет в списке поездов"
     else train_number.add_wagon(WAGON[train_number.type].new)
-      p @trains
+      puts "поезду номер #{number} был добавлен вагон"
     end
   end
 
@@ -139,7 +139,7 @@ class Main
     if train_number.nil?
       puts "Такого поезда еще нет в списке поездов"
     else train_number.add_route(@routs[0])
-      p train_number
+      puts "Поезду #{number} был назначен маршрут"
     end
   end
 
@@ -150,9 +150,8 @@ class Main
     if deleting_station.nil?
       puts "такой станции еще нет в списке"
     else
-      puts "Удалена станция из маршрута следования"
+      puts "Удалена станция из маршрута следования #{deleting_station}"
       @routs[0].delete_station(deleting_station)
-      p @routs[0]
     end
   end
 
@@ -164,9 +163,8 @@ class Main
     if adding.nil?
       puts "такой станции еще нет в списке"
     else
-      puts "Добавлена станция в маршрут следования"
+      puts "Добавлена станция в маршрут следования #{adding}"
       @routs[0].add_station(adding)
-      p @routs[0]
     end
   end
 
@@ -186,7 +184,7 @@ class Main
       else
         puts "Добавлена конечная точка маршрута"
         @routs << Route.new(beginning, ending)
-        p beginning, ending, @routs
+        puts "создан новый маршрут #{beginning.name}, #{ending.name}"
       end
     end
   end
@@ -198,12 +196,12 @@ class Main
     if inp == 1
       puts "Введите номер поезда(номером может быть сочетание цифр и букв формата ххх-хх)"
       number = $stdin.gets.chomp
-      CargoTrain.new(number)
+      @trains << CargoTrain.new(number)
       puts "создан грузовой поезд #{number}"
     elsif inp == 2
       puts "Введите номер поезда(номером может быть сочетание цифр и букв формата ххх-хх)"
       number = $stdin.gets.chomp
-      PassengerTrain.new(number)
+      @trains << PassengerTrain.new(number)
       puts "создан пассажирский поезд #{number}"
     end
   rescue RuntimeError => e
@@ -214,7 +212,7 @@ class Main
   def add_station
     puts "Введите название новой станции"
     name = $stdin.gets.chomp
-    Station.new(name)
+    @stations << Station.new(name)
     puts "создана станция #{name}"
   rescue RuntimeError => e
     puts e.message
