@@ -175,6 +175,8 @@ class Main
 
 
   def route_station_add
+    raise "Сначала необходимо создать станцию" if @stations.empty?
+    raise "Сначала необходимо создать маршрут" if @routs.empty?
     puts "Введите название станции из списка созданных ранее"
     station_add = $stdin.gets.chomp
     adding = @stations.detect{|station| station.name == station_add}
@@ -184,6 +186,8 @@ class Main
       puts "Добавлена станция в маршрут следования #{adding}"
       @routs[0].add_station(adding)
     end
+  rescue RuntimeError => e
+    puts e.message
   end
 
 
