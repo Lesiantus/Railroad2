@@ -1,6 +1,7 @@
 class Station
 
   include InstanceCounter
+  include Valid
 
   @@stations = []
 
@@ -9,8 +10,10 @@ class Station
   def initialize(name)
     @name = name
     @trains=[]
+    validate!
     @@stations << self
     register_instance
+
   end
 
   def self.all
@@ -32,5 +35,10 @@ class Station
   def train_depart(train)
     @trains.delete(train)
     train.station=nil
+  end
+  protected
+
+  def validate!
+    raise "Станция не может быть без названия!" if name.empty?
   end
 end

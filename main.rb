@@ -193,22 +193,33 @@ class Main
 
 
   def add_train
-    puts "Введите номер поезда(номером может любое сочетание цифр и букв)"
-    number = $stdin.gets.chomp
     puts "чтобы создать грузовой поезд, нажмите 1, чтобы создать пассажирский, нажмите 2"
     inp = $stdin.gets.chomp.to_i
     if inp == 1
-      @trains << CargoTrain.new(number)
+      puts "Введите номер поезда(номером может быть сочетание цифр и букв формата ххх-хх)"
+      number = $stdin.gets.chomp
+      CargoTrain.new(number)
+      puts "создан грузовой поезд #{number}"
     elsif inp == 2
-      @trains << PassengerTrain.new(number)
+      puts "Введите номер поезда(номером может быть сочетание цифр и букв формата ххх-хх)"
+      number = $stdin.gets.chomp
+      PassengerTrain.new(number)
+      puts "создан пассажирский поезд #{number}"
     end
-    p @trains
+  rescue RuntimeError => e
+    puts e.message
+    retry
   end
 
   def add_station
     puts "Введите название новой станции"
     name = $stdin.gets.chomp
-    @stations << Station.new(name)
-    p @stations
+    Station.new(name)
+    puts "создана станция #{name}"
+  rescue RuntimeError => e
+    puts e.message
+    retry
   end
 end
+c=Main.new
+c.start

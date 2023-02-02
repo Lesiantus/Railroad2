@@ -1,6 +1,8 @@
 require_relative 'instance_counter'
 require_relative 'manufacturer'
+require_relative 'valid'
 class Train
+  NUMBER_FORMAT = /^[a-zа-я0-9]{3}-?[a-zа-я0-9]{2}$/i
 
   include Manufacturer
   include InstanceCounter
@@ -16,6 +18,7 @@ class Train
     @speed = 0
     @@trains[number] = self
     register_instance
+    validate!
   end
 
   def self.find(number)
@@ -67,6 +70,15 @@ class Train
       puts "Предыдущая - #{route.stations[station_index - 1].name}." if station_index != 0
       puts "Следующая - #{route.stations[station_index + 1].name}." if station_index != route.stations.size - 1
     end
+  end
+
+  protected
+
+  def validate!
+    raise "поезд не может не иметь номера" if number.nil?
+    raise "номер должен иметь 5 символов в формате ххх-хх, или ххххх" if number.length<5
+    raise "неподдерживаемый формат номера, номер должен иметь 5 символов в формате ххх-хх, или ххххх" if number !~ NUMBER_FORMAT
+    true
   end
 end
 
