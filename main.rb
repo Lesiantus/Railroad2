@@ -41,6 +41,9 @@ class Main
     9 Переместить поезд по маршруту
     10 Просмотреть список станций
     11 Просмотреть список поездов
+    12 Посмотреть список поездов для конкретной станции
+    13 Показать список всех станций и находящиеся на них поезда
+    14 Список вагонов для поезда
     0 Выход
     )
   end
@@ -72,10 +75,16 @@ class Main
       stations_list
     elsif @choice == 11
       trains_list
+    elsif @choice == 12
+      trains_on_station
+    elsif @choice == 13
+      all_stations_and_trains_on
+    elsif @choice == 14
+      wagon_list_for_train
+    elsif @choice == 15
+      add_wagon_volume
     end
   end
-
-
 
   def trains_list
     @trains.map{|el| puts el.number}
@@ -86,6 +95,65 @@ class Main
     @stations.map{|el| puts el.name}
   end
 
+  def all_stations_and_trains_on
+    @stations.each do |station|
+      puts "станция #{station.name}"
+      if station.trains.length != 0
+      station.block_for_trains{ |train| puts "имеет поезд номер #{train.number} #{train.type} #{train.wagons.count}"}
+      end
+    end
+  end
+
+  def wagon_list_for_train
+    raise "Нужно создать поезд" if @trains.empty?
+    puts "Введите номер поезда"
+    number = $stdin.gets.chomp
+    train = @trains.detect{ |train| train.number == number }
+    raise "такого поезда нет" if train.nil?
+    train.block_for_wagons{ |wagon| puts "#{wagon.number} #{wagon.type} свободно #{wagon.free_space} занято #{wagon.used_volume}" }
+    puts "Управление свободным местом в вагоне: введите 1 для того, чтобы занять место, 2 для выхода в меню"
+    input = $stdin.gets.chomp.to_i
+    raise "неверный ввод, можно управлять, нажав клавишу 1 или 2!" unless [1, 2].include?(input)
+    if input == 1
+      puts "Введите номер вагона"
+      wagon_number = $stdin.gets.chomp.to_i
+      wagon = train.wagons.detect{|wagon| wagon.number == wagon_number }
+      raise "такой вагона нет у выбранного поезда" if wagon.nil?
+      if wagon.type == :cargo
+        raise "нет свободного места!" if wagon.free_space == 0
+        puts "свободно места #{wagon.free_space}, сколько заполнить?"
+        space = $stdin.gets.chomp.to_i
+        wagon.fill_in(space)
+      elsif wagon.type == :passenger
+        raise "нет свободного места!" if wagon.free_space == 0
+        wagon.ticket_sell
+        puts "свободных мест осталось #{wagon.free_space}"
+      end
+    elsif input == 2
+      show_menu
+    end
+  rescue RuntimeError => e
+    puts e.message
+  end
+
+
+
+
+  def trains_on_station
+    raise "сначала создайте станцию" if @stations.empty?
+    puts "Укажите станцию для вывода списка поездов"
+    input = $stdin.gets.chomp
+    station = @stations.detect{|station| station.name == input}
+    raise "такой станции еще не создано" if station.nil?
+    station.block_for_trains{ |train| puts "#{train.number} #{train.type} #{train.wagons.count}" }
+    puts "Просмотр вагонов для поезда (введите номер поезда)"
+    input2 = $stdin.gets.chomp
+    train = station.trains.detect{|train| train.number == input2 }
+    raise "такого поезда нет на станции" if train.nil?
+    train.block_for_wagons{|wagon| puts "Номер #{wagon.number} свободно #{wagon.free_space} занято #{wagon.used_volume}" }
+  rescue RuntimeError => e
+    puts e.message
+  end
 
   def move_train
     raise "Нужно создать поезд" if @trains.empty?
@@ -132,14 +200,21 @@ class Main
     raise "Сначала необходимо создать поезд" if @trains.empty?
     puts "Введите номер поезда для добавления вагона"
     number = $stdin.gets.chomp
-    train_number = @trains.detect{|train| train.number == number}
-    if train_number.nil?
+    train = @trains.detect{|train| train.number == number}
+    if train.nil?
       puts "Такого поезда еще нет в списке поездов"
-    else train_number.add_wagon(WAGON[train_number.type].new)
+    elsif train.type == :cargo
+      puts "Введите объем вагона"
+      volume = $stdin.gets.chomp.to_i
       puts "поезду номер #{number} был добавлен вагон"
+    elsif train.type == :passenger
+      puts "Введите количество посадочных мест вагона"
+      volume = $stdin.gets.chomp.to_i
     end
+    train.add_wagon(WAGON[train.type].new(volume))
   rescue RuntimeError => e
     puts e.message
+    retry unless @trains.empty?
   end
 
 

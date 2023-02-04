@@ -73,6 +73,10 @@ class Train
     end
   end
 
+  def block_for_wagons(&block)
+    @wagons.each {|wagon| block.call(wagon)}
+  end
+
   protected
 
   def validate!

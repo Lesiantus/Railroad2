@@ -36,6 +36,11 @@ class Station
     @trains.delete(train)
     train.station=nil
   end
+
+  def block_for_trains(&block)
+    @trains.each {|train| block.call(train)}
+  end
+
   protected
 
   def validate!
