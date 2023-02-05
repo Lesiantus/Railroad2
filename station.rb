@@ -1,5 +1,4 @@
 class Station
-
   include InstanceCounter
   include Valid
 
@@ -9,11 +8,10 @@ class Station
 
   def initialize(name)
     @name = name
-    @trains=[]
+    @trains = []
     validate!
     @@stations << self
     register_instance
-
   end
 
   def self.all
@@ -21,7 +19,7 @@ class Station
   end
 
   def arrival(train)
-    @trains<<train
+    @trains << train
   end
 
   def trains_on_station
@@ -29,21 +27,21 @@ class Station
   end
 
   def trains_by_type(type)
-    @trains.map{ |key, value| puts key.number, key.type if key.type == type }
+    @trains.map { |key, _value| puts key.number, key.type if key.type == type }
   end
 
   def train_depart(train)
     @trains.delete(train)
-    train.station=nil
+    train.station = nil
   end
 
   def block_for_trains(&block)
-    @trains.each {|train| block.call(train)}
+    @trains.each { |train| block.call(train) }
   end
 
   protected
 
   def validate!
-    raise "Станция не может быть без названия!" if name.empty?
+    raise 'Станция не может быть без названия!' if name.empty?
   end
 end

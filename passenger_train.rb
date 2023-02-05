@@ -1,4 +1,4 @@
-class PassengerTrain<Train
+class PassengerTrain < Train
   def initialize(number)
     @type = :passenger
     super
