@@ -8,6 +8,7 @@ require_relative 'route'
 require_relative 'station'
 require_relative 'manufacturer'
 require_relative 'instance_counter'
+require_relative 'valid'
 
 class Main
   WAGON = { cargo: CargoWagon, passenger: PassengerWagon }.freeze

@@ -1,17 +1,20 @@
 require_relative 'instance_counter'
 require_relative 'manufacturer'
 require_relative 'valid'
+require_relative 'accessors'
 class Train
   NUMBER_FORMAT = /^[a-zа-я0-9]{3}-?[a-zа-я0-9]{2}$/i.freeze
 
   include Manufacturer
   include InstanceCounter
-  include Valid
+  extend CustomAttrAccessor
+  include Validation
 
   @@trains = {}
+  attr_accessor_with_history :history, :speed
+  attr_reader :wagon, :type, :wagons, :route, :number, :station
 
-  attr_accessor :speed, :station, :route, :wagons
-  attr_reader :wagon, :type, :number
+  validate :number, :presence
 
   def initialize(number)
     @number = number
@@ -72,6 +75,12 @@ class Train
       puts "Предыдущая - #{route.stations[station_index - 1].name}." if station_index != 0
       puts "Следующая - #{route.stations[station_index + 1].name}." if station_index != route.stations.size - 1
     end
+  end
+
+  def valid?
+    validate!
+  rescue
+    false
   end
 
   def block_for_wagons(&block)

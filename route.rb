@@ -1,8 +1,9 @@
 class Route
   include InstanceCounter
-  include Valid
+  include Validation
 
   attr_accessor :stations, :depart, :arrive
+  validate :depart, :type, :Station
 
   def initialize(depart, arrive)
     @stations = [depart, arrive]
